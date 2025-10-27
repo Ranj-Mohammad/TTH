@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Countdown to Home</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+      :root {
+        --text-color: #ffffff;
+        --accent: #00e5ff;
+        --card-bg: rgba(255, 255, 255, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        background-size: 400% 400%;
+        animation: gradientMove 12s ease infinite;
+        color: var(--text-color);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        overflow: hidden;
+      }
+
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+      }
+
+      #countdown {
+        display: flex;
+        gap: 25px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .time-box {
+        background: var(--card-bg);
+        padding: 20px 30px;
+        border-radius: 20px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 0 25px rgba(0, 229, 255, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .time-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
+      }
+
+      .time-value {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: var(--accent);
+        text-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+      }
+
+      .label {
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #ccc;
+        margin-top: 5px;
+      }
+
+      footer {
+        margin-top: 40px;
+        font-size: 1rem;
+        color: #ddd;
+        opacity: 0.8;
+      }
+
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .time-box {
+          padding: 15px 20px;
+        }
+
+        .time-value {
+          font-size: 2rem;
+        }
+      }
+
+      /* Subtle floating animation for time boxes */
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-5px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>I'll be back home in</h1>
+
+    <div id="countdown">
+      <div class="time-box" style="animation: float 4s ease-in-out infinite">
+        <div id="days" class="time-value">0</div>
+        <div class="label">Days</div>
+      </div>
+      <div
+        class="time-box"
+        style="animation: float 4s ease-in-out infinite 0.5s"
+      >
+        <div id="hours" class="time-value">0</div>
+        <div class="label">Hours</div>
+      </div>
+      <div class="time-box" style="animation: float 4s ease-in-out infinite 1s">
+        <div id="minutes" class="time-value">0</div>
+        <div class="label">Minutes</div>
+      </div>
+      <div
+        class="time-box"
+        style="animation: float 4s ease-in-out infinite 1.5s"
+      >
+        <div id="seconds" class="time-value">0</div>
+        <div class="label">Seconds</div>
+      </div>
+    </div>
+
+    <footer>Counting down until I’m home ❤️</footer>
+
+    <script>
+      // 🗓️ Return date and time
+      const returnDate = new Date("2026-01-26T03:00:00").getTime();
+
+      const daysEl = document.getElementById("days");
+      const hoursEl = document.getElementById("hours");
+      const minutesEl = document.getElementById("minutes");
+      const secondsEl = document.getElementById("seconds");
+
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const diff = returnDate - now;
+
+        if (diff <= 0) {
+          document.body.innerHTML = "<h1>Welcome home! 🎉</h1>";
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        daysEl.textContent = days;
+        hoursEl.textContent = hours.toString().padStart(2, "0");
+        minutesEl.textContent = minutes.toString().padStart(2, "0");
+        secondsEl.textContent = seconds.toString().padStart(2, "0");
+      }
+
+      setInterval(updateCountdown, 1000);
+      updateCountdown();
+    </script>
+  </body>
+</html>
