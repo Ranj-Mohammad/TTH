@@ -3,187 +3,361 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Countdown to Home</title>
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+    <title>Arrival Countdown</title>
 
+    <!-- 
+      Two futuristic fonts: 
+      - Orbitron: For the big, blocky numbers.
+      - Share Tech Mono: For all other "system" text.
+    -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- ==================================================================== -->
+    <!-- CSS STYLES - Sci-Fi Dashboard Theme -->
+    <!-- ==================================================================== -->
+    <style>
       :root {
-        --text-color: #ffffff;
-        --accent: #00e5ff;
-        --card-bg: rgba(255, 255, 255, 0.1);
+        --accent-glow: #00e5ff; /* The user's original cyan is perfect */
+        --accent-dark: #008f9e;
+        --text-color: #f0f8ff; /* Alice Blue - a soft white */
+        --bg-color: #090a0f; /* Deep space black */
       }
 
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        font-family: "Poppins", sans-serif;
       }
 
       body {
-        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-        background-size: 400% 400%;
-        animation: gradientMove 12s ease infinite;
+        background-color: var(--bg-color);
+        /* This radial gradient gives a "vignette" effect, like looking
+          out of a cockpit window into deep space.
+        */
+        background-image: radial-gradient(
+          ellipse at bottom,
+          #1b2735 0%,
+          #090a0f 100%
+        );
         color: var(--text-color);
-        height: 100vh;
+        font-family: "Share Tech Mono", monospace;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         text-align: center;
         overflow: hidden;
+        position: relative;
       }
 
-      @keyframes gradientMove {
+      /* THE "COOL" PART 1: The Canvas
+        This canvas will sit BEHIND all content and will have
+        the JavaScript-animated starfield.
+      */
+      #starfield {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        /* z-index 0, and all other content z-index 1 */
+      }
+
+      /* THE "COOL" PART 2: The Scan Lines
+        This pseudo-element creates an animated scan line overlay,
+        giving a "monitor" or "hologram" feel.
+      */
+      body::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          rgba(18, 16, 16, 0) 0%,
+          rgba(18, 16, 16, 0) 90%,
+          rgba(0, 0, 0, 0.4) 95%,
+          rgba(0, 0, 0, 1) 100%
+        );
+        background-size: 100% 4px; /* 4px tall scan lines */
+        animation: scanline 4s linear infinite;
+        z-index: 1;
+        pointer-events: none; /* Allows clicking through it */
+      }
+
+      @keyframes scanline {
         0% {
-          background-position: 0% 50%;
-        }
-        50% {
-          background-position: 100% 50%;
+          background-position: 0 0;
         }
         100% {
-          background-position: 0% 50%;
+          background-position: 0 100vh;
         }
+      }
+
+      /* All content must be above the starfield and scan lines */
+      header,
+      main,
+      .footer-text {
+        position: relative;
+        z-index: 2;
+      }
+
+      header {
+        margin-bottom: 2rem;
       }
 
       h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1.5rem;
-        text-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+        font-family: "Share Tech Mono", monospace;
+        font-size: clamp(1.2rem, 3vw, 1.5rem);
+        font-weight: 400;
+        letter-spacing: 3px;
+        color: var(--text-color);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Subtitle for the Sci-Fi theme */
+      .subtitle {
+        font-family: "Orbitron", sans-serif;
+        font-size: clamp(2rem, 6vw, 3.5rem);
+        color: var(--accent-glow);
+        text-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow);
+        animation: flicker 3s infinite alternate;
+      }
+
+      @keyframes flicker {
+        0%,
+        18%,
+        22%,
+        25%,
+        53%,
+        57%,
+        100% {
+          text-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow),
+            0 0 40px var(--accent-glow);
+          opacity: 1;
+        }
+        20%,
+        24%,
+        55% {
+          text-shadow: none;
+          opacity: 0.8;
+        }
       }
 
       #countdown {
         display: flex;
-        gap: 25px;
+        gap: clamp(15px, 3vw, 25px);
         justify-content: center;
         flex-wrap: wrap;
       }
 
+      /* The "Digital Readout" boxes.
+        No more glass. Just pure, flat digital panels.
+      */
       .time-box {
-        background: var(--card-bg);
-        padding: 20px 30px;
-        border-radius: 20px;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 0 25px rgba(0, 229, 255, 0.2);
+        background: transparent;
+        padding: 20px 25px;
+        /* Sharp borders for the "panel" look */
+        border: 2px solid var(--accent-dark);
+        border-radius: 4px;
+        box-shadow: 0 0 15px var(--accent-dark) inset,
+          0 0 10px var(--accent-dark);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
 
       .time-box:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
+        transform: scale(1.05);
+        box-shadow: 0 0 25px var(--accent-dark) inset,
+          0 0 20px var(--accent-glow);
       }
 
       .time-value {
-        font-size: 2.5rem;
-        font-weight: 600;
-        color: var(--accent);
-        text-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+        font-family: "Orbitron", sans-serif;
+        font-size: clamp(2.5rem, 8vw, 4rem);
+        font-weight: 700;
+        color: var(--accent-glow);
+        text-shadow: 0 0 10px var(--accent-glow);
       }
 
       .label {
-        font-size: 1rem;
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.9rem;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #ccc;
-        margin-top: 5px;
-      }
-
-      footer {
-        margin-top: 40px;
-        font-size: 1rem;
-        color: #ddd;
+        letter-spacing: 2px;
+        color: var(--text-color);
+        margin-top: 10px;
         opacity: 0.8;
       }
 
-      @media (max-width: 600px) {
-        h1 {
-          font-size: 1.8rem;
-        }
-
-        .time-box {
-          padding: 15px 20px;
-        }
-
-        .time-value {
-          font-size: 2rem;
-        }
-      }
-
-      /* Subtle floating animation for time boxes */
-      @keyframes float {
-        0% {
-          transform: translateY(0px);
-        }
-        50% {
-          transform: translateY(-5px);
-        }
-        100% {
-          transform: translateY(0px);
-        }
+      .footer-text {
+        position: absolute;
+        bottom: 20px;
+        font-size: 0.9rem;
+        opacity: 0.7;
+        letter-spacing: 1px;
       }
     </style>
   </head>
   <body>
-    <h1>I'll be back home in</h1>
+    <!-- ==================================================================== -->
+    <!-- HTML MARKUP - Now with a Canvas for the starfield -->
+    <!-- ==================================================================== -->
 
-    <div id="countdown">
-      <div class="time-box" style="animation: float 4s ease-in-out infinite">
+    <!-- THE "COOL" PART 1: Starfield Canvas -->
+    <canvas id="starfield"></canvas>
+
+    <header>
+      <h1>SYSTEM MESSAGE: AWAITING ARRIVAL</h1>
+      <div class="subtitle">DESTINATION: HOME</div>
+    </header>
+
+    <main id="countdown">
+      <div class="time-box">
         <div id="days" class="time-value">0</div>
         <div class="label">Days</div>
       </div>
-      <div
-        class="time-box"
-        style="animation: float 4s ease-in-out infinite 0.5s"
-      >
+      <div class="time-box">
         <div id="hours" class="time-value">0</div>
         <div class="label">Hours</div>
       </div>
-      <div class="time-box" style="animation: float 4s ease-in-out infinite 1s">
+      <div class="time-box">
         <div id="minutes" class="time-value">0</div>
         <div class="label">Minutes</div>
       </div>
-      <div
-        class="time-box"
-        style="animation: float 4s ease-in-out infinite 1.5s"
-      >
+      <div class="time-box">
         <div id="seconds" class="time-value">0</div>
         <div class="label">Seconds</div>
       </div>
-    </div>
+    </main>
 
-    <footer>Counting down until I’m home ❤️</footer>
+    <p class="footer-text">
+      // END OF TRANSMISSION: Counting down until I’m home ❤️
+    </p>
 
+    <!-- ==================================================================== -->
+    <!-- JAVASCRIPT LOGIC - Countdown + Starfield -->
+    <!-- ==================================================================== -->
     <script>
-      // 🗓️ Return date and time
-      const returnDate = new Date("2026-01-26T03:00:00").getTime();
+      // Wait for the DOM to load before running any scripts
+      document.addEventListener("DOMContentLoaded", () => {
+        // ---------------------------------------------
+        // SECTION 1: The Countdown Timer (Your original logic)
+        // ---------------------------------------------
 
-      const daysEl = document.getElementById("days");
-      const hoursEl = document.getElementById("hours");
-      const minutesEl = document.getElementById("minutes");
-      const secondsEl = document.getElementById("seconds");
+        const returnDate = new Date("2026-01-26T03:00:00").getTime();
 
-      function updateCountdown() {
-        const now = new Date().getTime();
-        const diff = returnDate - now;
+        const elements = {
+          days: document.getElementById("days"),
+          hours: document.getElementById("hours"),
+          minutes: document.getElementById("minutes"),
+          seconds: document.getElementById("seconds"),
+        };
 
-        if (diff <= 0) {
-          document.body.innerHTML = "<h1>Welcome home! 🎉</h1>";
-          return;
+        function updateCountdown() {
+          const now = new Date().getTime();
+          const diff = returnDate - now;
+
+          if (diff <= 0) {
+            clearInterval(countdownInterval);
+            document.body.innerHTML = `
+              <header>
+                <h1>SYSTEM ALERT: ARRIVAL</h1>
+                <div class="subtitle">WELCOME HOME</div>
+              </header>
+              <p class="footer-text">// CONNECTION TERMINATED</p>`;
+            return;
+          }
+
+          const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const h = Math.floor(
+            (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+          const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+          elements.days.textContent = d;
+          elements.hours.textContent = h.toString().padStart(2, "0");
+          elements.minutes.textContent = m.toString().padStart(2, "0");
+          elements.seconds.textContent = s.toString().padStart(2, "0");
+
+          // Update the "flicker" animation on seconds to make it feel alive
+          if (elements.seconds.textContent.endsWith("0")) {
+            elements.seconds.style.animation =
+              "flicker 0.5s infinite alternate";
+          } else {
+            elements.seconds.style.animation = "none";
+          }
         }
 
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((diff / (1000 * 60)) % 60);
-        const seconds = Math.floor((diff / 1000) % 60);
+        const countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
 
-        daysEl.textContent = days;
-        hoursEl.textContent = hours.toString().padStart(2, "0");
-        minutesEl.textContent = minutes.toString().padStart(2, "0");
-        secondsEl.textContent = seconds.toString().padStart(2, "0");
-      }
+        // ---------------------------------------------
+        // SECTION 2: THE "COOL" PART - Starfield Canvas Logic
+        // ---------------------------------------------
 
-      setInterval(updateCountdown, 1000);
-      updateCountdown();
+        const canvas = document.getElementById("starfield");
+        const ctx = canvas.getContext("2d");
+
+        let stars = [];
+        const numStars = 400; // More stars!
+        const starSpeed = 0.5; // Slow drift
+
+        function resizeCanvas() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          stars = []; // Re-init stars on resize
+          initStars();
+        }
+
+        function initStars() {
+          for (let i = 0; i < numStars; i++) {
+            stars.push({
+              x: Math.random() * canvas.width,
+              y: Math.random() * canvas.height,
+              radius: Math.random() * 1.5 + 0.5, // Stars of varying sizes
+              color: `rgba(240, 248, 255, ${Math.random() * 0.5 + 0.3})`, // Faint white/blue
+              speed: Math.random() * 0.5 + starSpeed,
+            });
+          }
+        }
+
+        function animateStars() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          for (let star of stars) {
+            // Update star position
+            star.y += star.speed;
+
+            // Reset star to top if it goes off-screen
+            if (star.y > canvas.height) {
+              star.y = 0;
+              star.x = Math.random() * canvas.width;
+            }
+
+            // Draw the star
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+            ctx.fillStyle = star.color;
+            ctx.fill();
+          }
+
+          requestAnimationFrame(animateStars);
+        }
+
+        // --- Initialize ---
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas(); // Initial setup
+        animateStars(); // Start the animation loop
+      });
     </script>
   </body>
 </html>
