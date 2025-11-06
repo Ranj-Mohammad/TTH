@@ -3,27 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arrival Countdown</title>
+    <!-- TODO: EDIT THIS -->
+    <title>Counting Down to You</title>
 
     <!-- 
-      Two futuristic fonts: 
-      - Orbitron: For the big, blocky numbers.
-      - Share Tech Mono: For all other "system" text.
+      Romantic Fonts:
+      - Great Vibes: For the main, cursive-style title.
+      - Poppins: A clean, soft font for the numbers and text.
     -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
 
     <!-- ==================================================================== -->
-    <!-- CSS STYLES - Sci-Fi Dashboard Theme -->
+    <!-- CSS STYLES - Warm, Romantic Love Theme -->
     <!-- ==================================================================== -->
     <style>
       :root {
-        --accent-glow: #00e5ff; /* The user's original cyan is perfect */
-        --accent-dark: #008f9e;
-        --text-color: #f0f8ff; /* Alice Blue - a soft white */
-        --bg-color: #090a0f; /* Deep space black */
+        --text-color: #ffffff;
+        --accent: #ff6b81; /* A beautiful, warm coral-pink */
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 107, 129, 0.5); /* Soft pink border */
+        --bg-gradient-start: #4a0e4e; /* Deep magenta */
+        --bg-gradient-end: #a4426A; /* Softer rose */
       }
 
       * {
@@ -33,123 +36,81 @@
       }
 
       body {
-        background-color: var(--bg-color);
-        /* This radial gradient gives a "vignette" effect, like looking
-          out of a cockpit window into deep space.
-        */
-        background-image: radial-gradient(
-          ellipse at bottom,
-          #1b2735 0%,
-          #090a0f 100%
+        background: linear-gradient(
+          135deg,
+          var(--bg-gradient-start),
+          var(--bg-gradient-end)
         );
+        background-size: 400% 400%;
+        animation: gradientMove 15s ease infinite;
         color: var(--text-color);
-        font-family: "Share Tech Mono", monospace;
+        font-family: "Poppins", sans-serif;
         min-height: 100vh;
+        /* Use flex to allow scrolling if content is tall */
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         text-align: center;
-        overflow: hidden;
-        position: relative;
+        overflow-x: hidden; /* Hide horizontal scroll */
+        padding: 40px 20px; /* Add padding for spacing */
       }
 
-      /* THE "COOL" PART 1: The Canvas
-        This canvas will sit BEHIND all content and will have
-        the JavaScript-animated starfield.
-      */
-      #starfield {
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* Glowing particle canvas (replaces the starfield) */
+      #particles-js {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         z-index: 0;
-        /* z-index 0, and all other content z-index 1 */
       }
 
-      /* THE "COOL" PART 2: The Scan Lines
-        This pseudo-element creates an animated scan line overlay,
-        giving a "monitor" or "hologram" feel.
-      */
-      body::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          to bottom,
-          rgba(18, 16, 16, 0) 0%,
-          rgba(18, 16, 16, 0) 90%,
-          rgba(0, 0, 0, 0.4) 95%,
-          rgba(0, 0, 0, 1) 100%
-        );
-        background-size: 100% 4px; /* 4px tall scan lines */
-        animation: scanline 4s linear infinite;
-        z-index: 1;
-        pointer-events: none; /* Allows clicking through it */
-      }
-
-      @keyframes scanline {
-        0% {
-          background-position: 0 0;
-        }
-        100% {
-          background-position: 0 100vh;
-        }
-      }
-
-      /* All content must be above the starfield and scan lines */
+      /* All content must be above the particles */
       header,
       main,
+      .love-note,
       .footer-text {
         position: relative;
         z-index: 2;
+        width: 100%;
       }
 
       header {
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
       }
 
+      /* The new, romantic cursive title */
       h1 {
-        font-family: "Share Tech Mono", monospace;
-        font-size: clamp(1.2rem, 3vw, 1.5rem);
+        font-family: "Great Vibes", cursive;
+        font-size: clamp(3rem, 10vw, 5.5rem);
         font-weight: 400;
-        letter-spacing: 3px;
         color: var(--text-color);
-        text-transform: uppercase;
+        text-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent);
         margin-bottom: 0.5rem;
       }
 
-      /* Subtitle for the Sci-Fi theme */
+      /* The sub-title */
       .subtitle {
-        font-family: "Orbitron", sans-serif;
-        font-size: clamp(2rem, 6vw, 3.5rem);
-        color: var(--accent-glow);
-        text-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow);
-        animation: flicker 3s infinite alternate;
-      }
-
-      @keyframes flicker {
-        0%,
-        18%,
-        22%,
-        25%,
-        53%,
-        57%,
-        100% {
-          text-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow),
-            0 0 40px var(--accent-glow);
-          opacity: 1;
-        }
-        20%,
-        24%,
-        55% {
-          text-shadow: none;
-          opacity: 0.8;
-        }
+        font-family: "Poppins", sans-serif;
+        font-size: clamp(1rem, 3vw, 1.2rem);
+        font-weight: 300;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text-color);
+        opacity: 0.8;
       }
 
       #countdown {
@@ -157,39 +118,39 @@
         gap: clamp(15px, 3vw, 25px);
         justify-content: center;
         flex-wrap: wrap;
+        margin-top: 1.5rem;
       }
 
-      /* The "Digital Readout" boxes.
-        No more glass. Just pure, flat digital panels.
-      */
+      /* The countdown cards, now with a soft, romantic feel */
       .time-box {
-        background: transparent;
-        padding: 20px 25px;
-        /* Sharp borders for the "panel" look */
-        border: 2px solid var(--accent-dark);
-        border-radius: 4px;
-        box-shadow: 0 0 15px var(--accent-dark) inset,
-          0 0 10px var(--accent-dark);
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        padding: 25px 35px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3),
+          0 0 15px var(--card-border) inset;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
 
       .time-box:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 25px var(--accent-dark) inset,
-          0 0 20px var(--accent-glow);
+        transform: translateY(-5px) scale(1.03);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4),
+          0 0 30px var(--accent) inset, 0 0 20px var(--accent);
       }
 
       .time-value {
-        font-family: "Orbitron", sans-serif;
-        font-size: clamp(2.5rem, 8vw, 4rem);
-        font-weight: 700;
-        color: var(--accent-glow);
-        text-shadow: 0 0 10px var(--accent-glow);
+        font-family: "Poppins", sans-serif;
+        font-size: clamp(2.5rem, 8vw, 3.5rem);
+        font-weight: 600;
+        color: var(--accent);
+        text-shadow: 0 0 10px var(--accent);
       }
 
       .label {
-        font-family: "Share Tech Mono", monospace;
+        font-family: "Poppins", sans-serif;
         font-size: 0.9rem;
+        font-weight: 300;
         text-transform: uppercase;
         letter-spacing: 2px;
         color: var(--text-color);
@@ -197,26 +158,69 @@
         opacity: 0.8;
       }
 
+      /* NEW STYLES for the integrated Love Note 
+      */
+      .love-note {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        padding: 30px 40px;
+        max-width: 600px;
+        margin: 2.5rem auto 0 auto; /* Spacing from countdown */
+        text-align: left;
+      }
+
+      .love-note h2 {
+        font-family: "Great Vibes", cursive;
+        font-size: 2.5rem;
+        font-weight: 400;
+        color: var(--accent);
+        text-shadow: 0 0 10px var(--accent);
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .love-note p {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: var(--text-color);
+        margin-bottom: 25px;
+        opacity: 0.9;
+      }
+
+      .love-note .signature {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        text-align: right;
+      }
+      
       .footer-text {
-        position: absolute;
-        bottom: 20px;
-        font-size: 0.9rem;
-        opacity: 0.7;
-        letter-spacing: 1px;
+        /* Pushed to the bottom */
+        margin-top: 2.5rem;
+        padding-bottom: 20px; /* Ensure it's not cut off */
+        font-size: 1rem;
+        font-weight: 300;
+        opacity: 0.8;
       }
     </style>
   </head>
   <body>
     <!-- ==================================================================== -->
-    <!-- HTML MARKUP - Now with a Canvas for the starfield -->
+    <!-- HTML MARKUP -->
     <!-- ==================================================================== -->
 
-    <!-- THE "COOL" PART 1: Starfield Canvas -->
-    <canvas id="starfield"></canvas>
+    <!-- Floating particles background -->
+    <canvas id="particles-js"></canvas>
 
     <header>
-      <h1>SYSTEM MESSAGE: AWAITING ARRIVAL</h1>
-      <div class="subtitle">DESTINATION: HOME</div>
+      <!-- TODO: EDIT THIS -->
+      <h1>Counting down the seconds...</h1>
+      <div class="subtitle">Until I'm with you</div>
     </header>
 
     <main id="countdown">
@@ -238,20 +242,33 @@
       </div>
     </main>
 
-    <p class="footer-text">
-      // END OF TRANSMISSION: Counting down until I’m home ❤️
-    </p>
+    <!-- 
+      THE LOVE NOTE - Now part of the main page
+    -->
+    <section class="love-note">
+      <!-- TODO: EDIT THIS - This is your personal message -->
+      <h2>My Dearest,</h2>
+      <p>
+        Just a little note for you. Seeing these numbers go down is the only
+        thing on my mind. Counting every second until I can see you again.
+      </p>
+      <p>I miss you like crazy!</p>
+      <p class="signature">With all my love,<br />Me</p>
+    </section>
+
+    <!-- TODO: EDIT THIS -->
+    <p class="footer-text">Every second brings me closer to you ❤️</p>
 
     <!-- ==================================================================== -->
-    <!-- JAVASCRIPT LOGIC - Countdown + Starfield -->
+    <!-- JAVASCRIPT LOGIC - Countdown + Particles -->
     <!-- ==================================================================== -->
     <script>
-      // Wait for the DOM to load before running any scripts
       document.addEventListener("DOMContentLoaded", () => {
         // ---------------------------------------------
-        // SECTION 1: The Countdown Timer (Your original logic)
+        // SECTION 1: The Countdown Timer
         // ---------------------------------------------
 
+        // TODO: SET YOUR RETURN DATE
         const returnDate = new Date("2026-01-26T03:00:00").getTime();
 
         const elements = {
@@ -267,19 +284,21 @@
 
           if (diff <= 0) {
             clearInterval(countdownInterval);
+            // TODO: EDIT THIS - Final message
+            // This will replace the *entire* page content
             document.body.innerHTML = `
-              <header>
-                <h1>SYSTEM ALERT: ARRIVAL</h1>
-                <div class="subtitle">WELCOME HOME</div>
-              </header>
-              <p class="footer-text">// CONNECTION TERMINATED</p>`;
+              <canvas id="particles-js"></canvas>
+              <header style="z-index: 2;">
+                <h1>We're finally together!</h1>
+                <div class="subtitle">The wait is over ❤️</div>
+              </header>`;
+            // We re-run the particle init for the final screen
+            initializeParticles();
             return;
           }
 
           const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-          const h = Math.floor(
-            (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          );
+          const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
           const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
           const s = Math.floor((diff % (1000 * 60)) / 1000);
 
@@ -287,77 +306,74 @@
           elements.hours.textContent = h.toString().padStart(2, "0");
           elements.minutes.textContent = m.toString().padStart(2, "0");
           elements.seconds.textContent = s.toString().padStart(2, "0");
-
-          // Update the "flicker" animation on seconds to make it feel alive
-          if (elements.seconds.textContent.endsWith("0")) {
-            elements.seconds.style.animation =
-              "flicker 0.5s infinite alternate";
-          } else {
-            elements.seconds.style.animation = "none";
-          }
         }
 
         const countdownInterval = setInterval(updateCountdown, 1000);
         updateCountdown();
 
         // ---------------------------------------------
-        // SECTION 2: THE "COOL" PART - Starfield Canvas Logic
+        // SECTION 2: Romantic Particle Background
         // ---------------------------------------------
+        const canvas = document.getElementById("particles-js");
+        // Ensure canvas exists before trying to use it (for the final screen)
+        if (canvas) {
+            const ctx = canvas.getContext("2d");
+            let particles = [];
+            const numParticles = 200;
+            const particleSpeed = 0.3;
 
-        const canvas = document.getElementById("starfield");
-        const ctx = canvas.getContext("2d");
-
-        let stars = [];
-        const numStars = 400; // More stars!
-        const starSpeed = 0.5; // Slow drift
-
-        function resizeCanvas() {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          stars = []; // Re-init stars on resize
-          initStars();
-        }
-
-        function initStars() {
-          for (let i = 0; i < numStars; i++) {
-            stars.push({
-              x: Math.random() * canvas.width,
-              y: Math.random() * canvas.height,
-              radius: Math.random() * 1.5 + 0.5, // Stars of varying sizes
-              color: `rgba(240, 248, 255, ${Math.random() * 0.5 + 0.3})`, // Faint white/blue
-              speed: Math.random() * 0.5 + starSpeed,
-            });
-          }
-        }
-
-        function animateStars() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-          for (let star of stars) {
-            // Update star position
-            star.y += star.speed;
-
-            // Reset star to top if it goes off-screen
-            if (star.y > canvas.height) {
-              star.y = 0;
-              star.x = Math.random() * canvas.width;
+            function resizeCanvas() {
+              canvas.width = window.innerWidth;
+              canvas.height = window.innerHeight;
+              particles = [];
+              initParticles();
             }
 
-            // Draw the star
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-            ctx.fillStyle = star.color;
-            ctx.fill();
-          }
+            function initParticles() {
+              for (let i = 0; i < numParticles; i++) {
+                particles.push({
+                  x: Math.random() * canvas.width,
+                  y: Math.random() * canvas.height,
+                  radius: Math.random() * 2 + 0.5,
+                  // Soft pink/white particles with random opacity
+                  color: `rgba(255, 182, 193, ${Math.random() * 0.5 + 0.1})`,
+                  speed: Math.random() * 0.5 + particleSpeed,
+                });
+              }
+            }
 
-          requestAnimationFrame(animateStars);
+            function animateParticles() {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              for (let p of particles) {
+                p.y -= p.speed; // Move particles UP
+                if (p.y < 0) {
+                  // Reset to bottom
+                  p.y = canvas.height;
+                  p.x = Math.random() * canvas.width;
+                }
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+              }
+              requestAnimationFrame(animateParticles);
+            }
+
+            // Encapsulate particle logic to be reusable
+            function initializeParticles() {
+                window.addEventListener("resize", resizeCanvas);
+                resizeCanvas();
+                animateParticles();
+            }
+            
+            initializeParticles(); // Run on initial load
         }
+        
+        // --- No more Section 3! The secret note logic is gone. ---
 
-        // --- Initialize ---
-        window.addEventListener("resize", resizeCanvas);
-        resizeCanvas(); // Initial setup
-        animateStars(); // Start the animation loop
       });
     </script>
   </body>
 </html>
+
+
