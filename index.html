@@ -12,7 +12,7 @@
       - Poppins: A clean, soft font for the numbers and text.
     -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Delius&display=swap"
       rel="stylesheet"
     />
 
@@ -26,7 +26,7 @@
         --card-bg: rgba(255, 255, 255, 0.05);
         --card-border: rgba(255, 107, 129, 0.5); /* Soft pink border */
         --bg-gradient-start: #4a0e4e; /* Deep magenta */
-        --bg-gradient-end: #a4426A; /* Softer rose */
+        --bg-gradient-end: #a4426a; /* Softer rose */
       }
 
       * {
@@ -94,7 +94,7 @@
 
       /* The new, romantic cursive title */
       h1 {
-        font-family: "Great Vibes", cursive;
+        font-family: "Delius";
         font-size: clamp(3rem, 10vw, 5.5rem);
         font-weight: 400;
         color: var(--text-color);
@@ -135,8 +135,8 @@
 
       .time-box:hover {
         transform: translateY(-5px) scale(1.03);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4),
-          0 0 30px var(--accent) inset, 0 0 20px var(--accent);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 30px var(--accent) inset,
+          0 0 20px var(--accent);
       }
 
       .time-value {
@@ -198,7 +198,7 @@
         color: var(--text-color);
         text-align: right;
       }
-      
+
       .footer-text {
         /* Pushed to the bottom */
         margin-top: 2.5rem;
@@ -298,7 +298,9 @@
           }
 
           const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-          const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const h = Math.floor(
+            (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
           const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
           const s = Math.floor((diff % (1000 * 60)) / 1000);
 
@@ -317,63 +319,60 @@
         const canvas = document.getElementById("particles-js");
         // Ensure canvas exists before trying to use it (for the final screen)
         if (canvas) {
-            const ctx = canvas.getContext("2d");
-            let particles = [];
-            const numParticles = 200;
-            const particleSpeed = 0.3;
+          const ctx = canvas.getContext("2d");
+          let particles = [];
+          const numParticles = 200;
+          const particleSpeed = 0.3;
 
-            function resizeCanvas() {
-              canvas.width = window.innerWidth;
-              canvas.height = window.innerHeight;
-              particles = [];
-              initParticles();
+          function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            initParticles();
+          }
+
+          function initParticles() {
+            for (let i = 0; i < numParticles; i++) {
+              particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2 + 0.5,
+                // Soft pink/white particles with random opacity
+                color: `rgba(255, 182, 193, ${Math.random() * 0.5 + 0.1})`,
+                speed: Math.random() * 0.5 + particleSpeed,
+              });
             }
+          }
 
-            function initParticles() {
-              for (let i = 0; i < numParticles; i++) {
-                particles.push({
-                  x: Math.random() * canvas.width,
-                  y: Math.random() * canvas.height,
-                  radius: Math.random() * 2 + 0.5,
-                  // Soft pink/white particles with random opacity
-                  color: `rgba(255, 182, 193, ${Math.random() * 0.5 + 0.1})`,
-                  speed: Math.random() * 0.5 + particleSpeed,
-                });
+          function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let p of particles) {
+              p.y -= p.speed; // Move particles UP
+              if (p.y < 0) {
+                // Reset to bottom
+                p.y = canvas.height;
+                p.x = Math.random() * canvas.width;
               }
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+              ctx.fillStyle = p.color;
+              ctx.fill();
             }
+            requestAnimationFrame(animateParticles);
+          }
 
-            function animateParticles() {
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              for (let p of particles) {
-                p.y -= p.speed; // Move particles UP
-                if (p.y < 0) {
-                  // Reset to bottom
-                  p.y = canvas.height;
-                  p.x = Math.random() * canvas.width;
-                }
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-              }
-              requestAnimationFrame(animateParticles);
-            }
+          // Encapsulate particle logic to be reusable
+          function initializeParticles() {
+            window.addEventListener("resize", resizeCanvas);
+            resizeCanvas();
+            animateParticles();
+          }
 
-            // Encapsulate particle logic to be reusable
-            function initializeParticles() {
-                window.addEventListener("resize", resizeCanvas);
-                resizeCanvas();
-                animateParticles();
-            }
-            
-            initializeParticles(); // Run on initial load
+          initializeParticles(); // Run on initial load
         }
-        
-        // --- No more Section 3! The secret note logic is gone. ---
 
+        // --- No more Section 3! The secret note logic is gone. ---
       });
     </script>
   </body>
 </html>
-
-
