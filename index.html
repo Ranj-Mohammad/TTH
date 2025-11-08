@@ -12,7 +12,7 @@
       - Poppins: A clean, soft font for the numbers and text.
     -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Delius&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
 
@@ -94,7 +94,7 @@
 
       /* The new, romantic cursive title */
       h1 {
-        font-family: "Delius";
+        font-family: "Great Vibes", cursive;
         font-size: clamp(3rem, 10vw, 5.5rem);
         font-weight: 400;
         color: var(--text-color);
@@ -189,6 +189,8 @@
         color: var(--text-color);
         margin-bottom: 25px;
         opacity: 0.9;
+        /* Set a min height to prevent layout jump while message loads */
+        min-height: 50px;
       }
 
       .love-note .signature {
@@ -197,6 +199,8 @@
         font-weight: 600;
         color: var(--text-color);
         text-align: right;
+        /* Remove bottom margin from the main message to be next to signature */
+        margin-bottom: 0;
       }
 
       .footer-text {
@@ -243,16 +247,15 @@
     </main>
 
     <!-- 
-      THE LOVE NOTE - Now part of the main page
+      THE LOVE NOTE - Now with a dynamic message
     -->
     <section class="love-note">
-      <!-- TODO: EDIT THIS - This is your personal message -->
       <h2>My Dearest,</h2>
-      <p>
-        Just a little note for you. Seeing these numbers go down is the only
-        thing on my mind. Counting every second until I can see you again.
-      </p>
-      <p>I miss you like crazy!</p>
+
+      <!-- This paragraph's content will be set by JavaScript -->
+      <p id="random-message-content">Loading...</p>
+
+      <!-- The signature is now separate from the random message -->
       <p class="signature">With all my love,<br />Me</p>
     </section>
 
@@ -314,7 +317,81 @@
         updateCountdown();
 
         // ---------------------------------------------
-        // SECTION 2: Romantic Particle Background
+        // SECTION 2: Random Love Note
+        // ---------------------------------------------
+
+        // TODO: EDIT THIS - Add all your messages here
+        const loveMessages = [
+          "Every sunrise brings me one day closer to seeing you again, dlakam. 🩵",
+          "I miss you more than words can ever say, baby — my heart aches for you every day.",
+          "If I could, I'd cross every mile between us right now just to hold you tight. ❤️",
+          "Every moment without you feels incomplete — you're the piece that makes me whole, dlakam.",
+          "You are always in my thoughts, baby — morning, night, and every second in between.",
+          "No matter how far apart we are, your love is the air I breathe. 🩵",
+          "I close my eyes and imagine your smile — it's what keeps me going every single day.",
+          "I'd give anything just to feel your warmth beside me again, dlakam. ❤️",
+          "You've taken a permanent place in my heart — there's no escaping your love, baby.",
+          "The countdown isn't just days — it's heartbeats, all leading back to you.",
+          "Every mile that separates us is filled with my love, traveling its way to you. 🩵",
+          "You're not just my girlfriend, you're my reason for everything I do, dlakam.",
+          "I miss the sound of your laugh more than anything — I can almost hear it when I think of you.",
+          "I'm counting down the nights till I can finally fall asleep in your arms again, baby. ❤️",
+          "No distance can break what we've built — our love is unshakable, unbreakable, forever.",
+          "The thought of seeing you again makes even my toughest days worth it, dlakam.",
+          "My love for you doesn't fade with distance — it only burns brighter. 🩵",
+          "Every time I look at the calendar, I smile — one day closer to *you*, my baby.",
+          "I'm not just missing you, dlakam — I'm missing the part of me that's only complete when you're near. ❤️",
+          "No words could ever describe how deeply I love you — but I'll spend my life trying, baby.",
+          "If I could send my hugs through the screen, you'd never stop feeling my arms around you. 🩵",
+          "You're not a dream, you're my reality — the most beautiful one I've ever known, dlakam.",
+          "Even though you're far, I feel you everywhere — in every song, every breath, every heartbeat. ❤️",
+          "Sometimes I just stop and smile because I remember I get to love you — and soon, see you again.",
+          "Ba to, hama shtek zor xosh e — with you, everything feels right, baby. 🩵",
+          "The distance only reminds me how lucky I am to have someone worth missing this much, dlakam.",
+          "Every message from you feels like a spark of warmth in my heart.",
+          "I love you beyond the stars, beyond the miles — beyond anything that could ever separate us. ❤️",
+          "Soon, dlakam, I'll be holding you and never letting go again.",
+          "You're the calm to my chaos, the peace to my heart, and the love of my life, baby. 🩵",
+          "Every beat of my heart whispers your name — it's always been you, dlakam.",
+          "The world feels empty without you in it — but knowing I'll see you soon keeps me alive. ❤️",
+          "I dream of that first moment when our eyes meet again — I know I'll never forget it, baby.",
+          "No one has ever made me feel what you make me feel, dlakam. You're my forever. 🩵",
+          "You're my favorite hello, and the hardest goodbye I've ever had to say.",
+          "I'm not just waiting for you — I'm holding onto the promise that our love is worth every second apart. ❤️",
+          "My heart has a home, and it's wherever you are, baby.",
+          "Every photo of you, every memory, keeps me smiling until I can make new ones with you.",
+          "You're not just beautiful — you're everything I never knew I needed, dlakam. 🩵",
+          "Even distance can't hide how much I love you — it only proves it more.",
+          "When I finally see you again, I'll hold you like it's the first and last time, baby. ❤️",
+          "Basaqaw bm taqanakam — my love for you never ends, dlakam.",
+          "No matter where I am, your name is always the most beautiful sound to me. 🩵",
+          "You're the best part of my days, my nights, my everything, baby.",
+          "Even the stars envy the way I look at you, dlakam. ❤️",
+          "Every countdown moment is a heartbeat of love, waiting for the day I see you again.",
+          "You're the reason I believe in love, in hope, in forever — you're my forever, baby. 🩵",
+          "The distance may test us, but love like ours never fails — it only grows stronger, dlakam.",
+          "Every single day, I fall in love with you all over again, baby. ❤️",
+          "I can't wait to hold you, to kiss you, to finally feel that everything is right again. 🩵",
+          "One day soon, the countdown will hit zero — and I'll be looking straight into your eyes, my love. ❤️",
+        ];
+
+        // Pick a random message
+        const randomIndex = Math.floor(Math.random() * loveMessages.length);
+        const randomMessage = loveMessages[randomIndex];
+
+        // Find the message element in the HTML
+        const messageElement = document.getElementById(
+          "random-message-content"
+        );
+
+        // Set the message
+        if (messageElement) {
+          // Using innerHTML lets you add line breaks with <br> in your messages
+          messageElement.innerHTML = randomMessage;
+        }
+
+        // ---------------------------------------------
+        // SECTION 3: Romantic Particle Background
         // ---------------------------------------------
         const canvas = document.getElementById("particles-js");
         // Ensure canvas exists before trying to use it (for the final screen)
@@ -363,6 +440,7 @@
 
           // Encapsulate particle logic to be reusable
           function initializeParticles() {
+            if (!canvas) return; // Add a safety check
             window.addEventListener("resize", resizeCanvas);
             resizeCanvas();
             animateParticles();
@@ -370,8 +448,6 @@
 
           initializeParticles(); // Run on initial load
         }
-
-        // --- No more Section 3! The secret note logic is gone. ---
       });
     </script>
   </body>
